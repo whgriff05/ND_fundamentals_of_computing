@@ -1,0 +1,53 @@
+# General Ignores
+**/submit/report.txt
+*.o
+
+# Review 1
+review1/testshift
+review1/teststates1
+review1/teststates2
+review1/teststates3
+
+# Lab 1
+lab1/prog1
+lab1/prog2
+lab1/report.txt
+
+# Lab 2
+lab2/in_lab/digits
+lab2/in_lab/quad
+lab2/in_lab/sums
+lab2/submit/graph
+lab2/submit/mortgage
+lab2/submit/table
+
+# Lab 3
+lab3/in_lab/rectangle
+lab3/in_lab/test_gcd
+lab3/submit/menucalc
+lab3/submit/polar
+lab3/submit/quadratics
+
+# Lab 4
+lab4/in_lab/five
+lab4/in_lab/many
+lab4/submit/grades
+lab4/submit/my_primes
+lab4/submit/ndfootball
+lab4/submit/primes
+lab4/submit/primes_output.txt
+lab4/submit/test_primes.py
+
+# Lab 5
+lab5/in_lab/newgrades1
+lab5/in_lab/newgrades2
+lab5/in_lab/stringex
+lab5/submit/part1/letterfreq
+lab5/submit/part2/mysayings
+
+# Lab 6
+lab6/in_lab/2/addup
+lab6/submit/Life/playlife
+lab6/submit/Life/pl.sol
+
+
