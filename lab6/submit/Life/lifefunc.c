@@ -124,6 +124,7 @@ int read_commands(char board[][MAX_DIMENSION], char new_board[][MAX_DIMENSION], 
       }
     } else if (option == 'p') {
       // Returns 1 to start the play loop
+      fclose(fp);
       return 1;
     } else if (option == ' ' || option == '\n') {
       // Ignores whitespace or newlines
