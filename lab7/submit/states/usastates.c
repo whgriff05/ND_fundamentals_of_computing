@@ -1,3 +1,8 @@
+// Name: usastates.c
+// Author: Will Griffin
+// Class: CSE 20311 - Fundamentals of Computing
+// Assignment: Lab 7 Part 2 Driver
+// Description: US States and Capitals
 #include "statesfunc.h"
 
 // Global variable for states array size

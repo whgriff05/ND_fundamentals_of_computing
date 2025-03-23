@@ -1,3 +1,8 @@
+// Name: statesfunc.c
+// Author: Will Griffin
+// Class: CSE 20311 - Fundamentals of Computing
+// Assignment: Lab 7 Part 2 Functions
+// Description: US States and Capitals
 #include "statesfunc.h"
 
 // Global sort variable

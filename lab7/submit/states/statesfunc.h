@@ -1,3 +1,8 @@
+// Name: statesfunc.h
+// Author: Will Griffin
+// Class: CSE 20311 - Fundamentals of Computing
+// Assignment: Lab 7 Part 2 Header
+// Description: US States and Capitals
 #include <ctype.h>
 #include <stdlib.h>
 #include <stdio.h>
