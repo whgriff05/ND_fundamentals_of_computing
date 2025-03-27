@@ -1,0 +1,3 @@
+1. Is it assumed that any word entered will be 15 letters or less? If it is longer, do we need to alert the user?
+
+2. If a one letter word is entered, do we need to alert the user or just ignore it?
