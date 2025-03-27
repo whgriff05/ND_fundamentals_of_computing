@@ -7,6 +7,12 @@ int is_str_alpha(char str[]) {
   return 1;
 }
 
+void to_caps(char str[]) {
+  for (int i = 0; i < strlen(str); i++) {
+    str[i] = toupper(str[i]);
+  }
+}
+
 int get_words(FILE *fp, Word words[]) {
   int count = 0;
   while (1) {
@@ -18,7 +24,8 @@ int get_words(FILE *fp, Word words[]) {
     if (!strcmp(".", current_word)) break;
 
     if (!is_str_alpha(current_word)) break;
-
+    
+    to_caps(current_word);
     strcpy(words[count].word, current_word);
     words[count].length = strlen(current_word);
 
@@ -57,6 +64,11 @@ void hplace(char board[][BOARD_SIZE], Word *wp) {
     board[wp->posr][wp->posc + i] = wp->word[i];
 }
 
+void vplace(char board[][BOARD_SIZE], Word *wp) {
+  for (int i = 0; i < wp->length; i++)
+    board[wp->posr + i][wp->posc] = wp->word[i];
+}
+
 void display(char board[][BOARD_SIZE]) {
   for (int x = 0; x < BOARD_SIZE + 2; x++) {
     if (x == 0 || x == 16) {
@@ -74,47 +86,182 @@ void display(char board[][BOARD_SIZE]) {
   }
 }
 
-void place_words(char board[][BOARD_SIZE], Word *wp, int count) {
+void display_boards(char board[][BOARD_SIZE]) {
+  char sol_board[BOARD_SIZE][BOARD_SIZE];
+  init_board(sol_board);
+  char empty_board[BOARD_SIZE][BOARD_SIZE];
+  init_board(empty_board);
+
+  for (int i = 0; i < BOARD_SIZE; i++) {
+    for (int j = 0; j < BOARD_SIZE; j++) {
+      if (board[i][j] == ' ') {
+	sol_board[i][j] = '.';
+	empty_board[i][j] = '#';
+      } else if (isalpha(board[i][j])) {
+	sol_board[i][j] = board[i][j];
+	empty_board[i][j] = ' ';
+      }
+    }
+  }
+  
+  printf("SOLUTION:\n");
+  display(sol_board);
+
+  printf("\nPUZZLE:\n");
+  display(empty_board);
+}
+
+void display_clues(Clue clues[], int placed_word_count) {
+  // Print header
+  printf("Location | Direction | Anagram\n");
+  for (int i = 0; i < placed_word_count; i++) {
+    char dir[20];
+    if (clues[i].orientation == 'v') {
+      strcpy(dir, "Down");
+    } else if (clues[i].orientation == 'h') {
+      strcpy(dir, "Across");
+    }
+    printf("%4d,%-4d| %9s | %s\n", clues[i].posr + 1, clues[i].posc + 1, dir, clues[i].anagram);
+  }
+}
+
+int place_words(char board[][BOARD_SIZE], Word *wp, int count, Word placed_words[]) {
   int amt_tried = 0;
   // Check if first word
   if (wp->order == 0) {
     // Calculate starting positions
     wp->posr = (BOARD_SIZE / 2);
     wp->posc = (BOARD_SIZE / 2) - (wp->length / 2);
-    wp->orient = 'h';
+    wp->orientation = 'h';
 
     // Place the word
     hplace(board, wp);
+
+    // Add to record
+    placed_words[amt_tried] = *wp;
     
     // Increment the word pointer and the amount tried
     wp++;
     amt_tried++;
   }
   while (amt_tried < count) {
-    Letter letter = get_intersection(wp, amt_tried);
+    Letter letter = get_intersection(board, wp, amt_tried);
+
+    if (letter.letter == '!') {
+      printf("Found a non-intersection with word %s\n", wp->word);
+      break;
+    }
+    
+    int posr, posc;
+    
+    // See if the intersected word is vertical or horizontal
+    if (letter.intersect->orientation == 'h') {
+      posr = letter.intersect->posr - letter.offset_current;
+      posc = letter.intersect->posc + letter.offset_intersect;
+      wp->posr = posr;
+      wp->posc = posc;
+      wp->orientation = 'v';
+      vplace(board, wp);
+    } else if (letter.intersect->orientation == 'v') {
+      posr = letter.intersect->posr + letter.offset_intersect;
+      posc = letter.intersect->posc - letter.offset_current;
+      wp->posr = posr;
+      wp->posc = posc;
+      wp->orientation = 'h';
+      hplace(board, wp);
+    } 
+    placed_words[amt_tried] = *wp;
+    wp++;
+    amt_tried++;
   }
+
+  return amt_tried;
   
 }
 
-Letter get_intersection(Word *wp, int amt_tried) {
+Letter get_intersection(char board[][BOARD_SIZE], Word *wp, int amt_tried) {
   Letter letter;
   Word *current = wp;
-
-  // Back up word pointer to start of array
-  wp -= amt_tried;
-
-  for (int i = 0; i < amt_tried - 1; i++) {
+  
+  wp--;
+  
+  for (int i = amt_tried; i > 0; i--) {
     for (int j = 0; j < current->length; j++) {
       for (int k = 0; k < wp->length; k++) {
+
 	if (current->word[j] == wp->word[k]) {
 	  letter.letter = current->word[j];
 	  letter.offset_current = j;
 	  letter.offset_intersect = k;
 	  letter.intersect = wp;
-	  return letter;
+
+	  if (check_pos(board, current, letter)) {
+	    return letter;
+	  }
 	}
       }
     }
-    wp++;
+    wp--;
+  }
+  letter.letter = '!';
+  return letter;
+}
+
+int check_pos(char board[][BOARD_SIZE], Word *current, Letter letter) {
+  int startr, endr;
+  int startc, endc;
+  if (letter.intersect->orientation == 'h') {
+    startr = letter.intersect->posr - letter.offset_current - 1;
+    endr = startr + current->length + 1;
+    startc = letter.intersect->posc + letter.offset_intersect - 1;
+    endc = letter.intersect->posc + letter.offset_intersect + 1;
+  } else if (letter.intersect->orientation == 'v') {
+    startr = letter.intersect->posr + letter.offset_intersect - 1;
+    endr = letter.intersect->posr + letter.offset_intersect + 1;
+    startc = letter.intersect->posc - letter.offset_current - 1;
+    endc = startc + current->length + 1;
+  }
+
+  //printf("%s - %c - %s | %d-%d | %d-%d\n", current->word, letter.letter, letter.intersect->word, startr, endr, startc, endc);
+  
+  if (startc < -1 || endc > BOARD_SIZE || startr < -1 || endr > BOARD_SIZE) {
+    //printf("%d %d %d %d\n", startc <= -1, endc > BOARD_SIZE, startr <= -1, endr > BOARD_SIZE);
+    return 0;
+  }
+  
+  for (int r = startr; r <= endr; r++) {
+    for (int c = startc; c <= endc; c++) {
+      if (r < 0 || c < 0 || r >= BOARD_SIZE || c >= BOARD_SIZE) continue;
+      if (letter.intersect->orientation == 'h' && r == letter.intersect->posr) continue;
+      if (letter.intersect->orientation == 'v' && c == letter.intersect->posc) continue;
+      if (board[r][c] != ' ') {
+	return 0;
+      }
+    }
+  }
+  return 1;
+  
+}
+
+void generate_anagrams(Clue clues[], int count) {
+  for (int i = 0; i < count; i++) {
+    char word[BOARD_SIZE + 1];
+    strcpy(word, clues[i].sol);
+    scramble(word);
+    strcpy(clues[i].anagram, word);
+  }
+}
+
+void scramble(char word[]) {
+  int len = strlen(word);
+  // Scramble
+  srand(time(NULL));
+  for (int i = 0; i < len * 2; i++) {
+    int i1 = rand() % len;
+    int i2 = rand() % len;
+    char temp;
+    temp = word[i1];
+    word[i1] = word[i2];
+    word[i2] = temp;
   }
 }
