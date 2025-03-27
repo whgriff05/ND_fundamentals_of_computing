@@ -31,6 +31,7 @@ void init_board(char board[][BOARD_SIZE]);
 void hplace(char board[][BOARD_SIZE], Word *wp);
 void vplace(char board[][BOARD_SIZE], Word *wp);
 void display(char board[][BOARD_SIZE]);
+void display_boards(char board[][BOARD_SIZE]);
 void place_words(char board[][BOARD_SIZE], Word *wp, int count);
 Letter get_intersection(char board[][BOARD_SIZE], Word *wp, int amt_tried);
 int check_pos(char board[][BOARD_SIZE], Word *wp, Letter letter);

@@ -14,6 +14,7 @@ int main(int argc, char *argv[]) {
 
   if (argc == 1) {
     // Get words and word count from user
+    printf("Please enter up to 20 words followed by a '.'\n");
     word_count = get_words(stdin, words);
   } else if (argc == 2) {
     input = fopen(argv[1], "r");
@@ -36,7 +37,7 @@ int main(int argc, char *argv[]) {
   place_words(board, wp, word_count);
 
   // TODO: temp display board
-  display(board);
+  display_boards(board);
 
   return 0;
 }

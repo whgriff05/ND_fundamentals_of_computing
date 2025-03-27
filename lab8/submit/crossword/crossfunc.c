@@ -86,6 +86,31 @@ void display(char board[][BOARD_SIZE]) {
   }
 }
 
+void display_boards(char board[][BOARD_SIZE]) {
+  char sol_board[BOARD_SIZE][BOARD_SIZE];
+  init_board(sol_board);
+  char empty_board[BOARD_SIZE][BOARD_SIZE];
+  init_board(empty_board);
+
+  for (int i = 0; i < BOARD_SIZE; i++) {
+    for (int j = 0; j < BOARD_SIZE; j++) {
+      if (board[i][j] == ' ') {
+	sol_board[i][j] = '.';
+	empty_board[i][j] = '#';
+      } else if (isalpha(board[i][j])) {
+	sol_board[i][j] = board[i][j];
+	empty_board[i][j] = ' ';
+      }
+    }
+  }
+  
+  printf("SOLUTION:\n");
+  display(sol_board);
+
+  printf("\nPUZZLE:\n");
+  display(empty_board);
+}
+
 void place_words(char board[][BOARD_SIZE], Word *wp, int count) {
   int amt_tried = 0;
   // Check if first word
@@ -105,7 +130,10 @@ void place_words(char board[][BOARD_SIZE], Word *wp, int count) {
   while (amt_tried < count) {
     Letter letter = get_intersection(board, wp, amt_tried);
 
-    if (letter.letter == '!') break;
+    if (letter.letter == '!') {
+      printf("Found a non-intersection with word %s\n", wp->word);
+      break;
+    }
     
     int posr, posc;
     
@@ -130,7 +158,7 @@ void place_words(char board[][BOARD_SIZE], Word *wp, int count) {
     amt_tried++;
   }
 
-  printf("Found a non-intersection with word %s\n", wp->word);
+
   
 }
 
@@ -138,10 +166,6 @@ Letter get_intersection(char board[][BOARD_SIZE], Word *wp, int amt_tried) {
   Letter letter;
   Word *current = wp;
   
-  /*
-  // Back up word pointer to start of array
-  wp -= amt_tried;
-  */
   wp--;
   
   for (int i = amt_tried; i > 0; i--) {
@@ -180,13 +204,17 @@ int check_pos(char board[][BOARD_SIZE], Word *current, Letter letter) {
     startc = letter.intersect->posc - letter.offset_current - 1;
     endc = startc + current->length + 1;
   }
+
+  //printf("%s - %c - %s | %d-%d | %d-%d\n", current->word, letter.letter, letter.intersect->word, startr, endr, startc, endc);
   
-  if (startc < 0 || endc > BOARD_SIZE || startr < 0 || startr > BOARD_SIZE) {
+  if (startc < -1 || endc > BOARD_SIZE || startr < -1 || endr > BOARD_SIZE) {
+    //printf("%d %d %d %d\n", startc <= -1, endc > BOARD_SIZE, startr <= -1, endr > BOARD_SIZE);
     return 0;
   }
   
   for (int r = startr; r <= endr; r++) {
     for (int c = startc; c <= endc; c++) {
+      if (r < 0 || c < 0 || r >= BOARD_SIZE || c >= BOARD_SIZE) continue;
       if (letter.intersect->orientation == 'h' && r == letter.intersect->posr) continue;
       if (letter.intersect->orientation == 'v' && c == letter.intersect->posc) continue;
       if (board[r][c] != ' ') {
@@ -197,3 +225,4 @@ int check_pos(char board[][BOARD_SIZE], Word *current, Letter letter) {
   return 1;
   
 }
+
