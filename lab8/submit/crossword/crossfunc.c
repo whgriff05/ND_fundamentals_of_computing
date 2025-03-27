@@ -111,7 +111,21 @@ void display_boards(char board[][BOARD_SIZE]) {
   display(empty_board);
 }
 
-void place_words(char board[][BOARD_SIZE], Word *wp, int count) {
+void display_clues(Clue clues[], int placed_word_count) {
+  // Print header
+  printf("Location | Direction | Anagram\n");
+  for (int i = 0; i < placed_word_count; i++) {
+    char dir[20];
+    if (clues[i].orientation == 'v') {
+      strcpy(dir, "Down");
+    } else if (clues[i].orientation == 'h') {
+      strcpy(dir, "Across");
+    }
+    printf("%4d,%-4d| %9s | %s\n", clues[i].posr + 1, clues[i].posc + 1, dir, clues[i].anagram);
+  }
+}
+
+int place_words(char board[][BOARD_SIZE], Word *wp, int count, Word placed_words[]) {
   int amt_tried = 0;
   // Check if first word
   if (wp->order == 0) {
@@ -122,6 +136,9 @@ void place_words(char board[][BOARD_SIZE], Word *wp, int count) {
 
     // Place the word
     hplace(board, wp);
+
+    // Add to record
+    placed_words[amt_tried] = *wp;
     
     // Increment the word pointer and the amount tried
     wp++;
@@ -153,12 +170,12 @@ void place_words(char board[][BOARD_SIZE], Word *wp, int count) {
       wp->orientation = 'h';
       hplace(board, wp);
     } 
-    
+    placed_words[amt_tried] = *wp;
     wp++;
     amt_tried++;
   }
 
-
+  return amt_tried;
   
 }
 
@@ -226,3 +243,25 @@ int check_pos(char board[][BOARD_SIZE], Word *current, Letter letter) {
   
 }
 
+void generate_anagrams(Clue clues[], int count) {
+  for (int i = 0; i < count; i++) {
+    char word[BOARD_SIZE + 1];
+    strcpy(word, clues[i].sol);
+    scramble(word);
+    strcpy(clues[i].anagram, word);
+  }
+}
+
+void scramble(char word[]) {
+  int len = strlen(word);
+  // Scramble
+  srand(time(NULL));
+  for (int i = 0; i < len * 2; i++) {
+    int i1 = rand() % len;
+    int i2 = rand() % len;
+    char temp;
+    temp = word[i1];
+    word[i1] = word[i2];
+    word[i2] = temp;
+  }
+}

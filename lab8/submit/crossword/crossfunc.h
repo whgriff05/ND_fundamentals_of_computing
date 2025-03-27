@@ -1,6 +1,8 @@
 #include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 // Global Variables
 #define BOARD_SIZE 15
@@ -23,6 +25,14 @@ typedef struct {
   Word *intersect;
 } Letter;
 
+typedef struct {
+  char sol[BOARD_SIZE + 1];
+  char anagram[BOARD_SIZE + 1];
+  char orientation;
+  int posr;
+  int posc;
+} Clue;
+
 // Function Prototypes
 int get_words(FILE *fp, Word words[]);
 int is_str_alpha(char str[]);
@@ -32,6 +42,9 @@ void hplace(char board[][BOARD_SIZE], Word *wp);
 void vplace(char board[][BOARD_SIZE], Word *wp);
 void display(char board[][BOARD_SIZE]);
 void display_boards(char board[][BOARD_SIZE]);
-void place_words(char board[][BOARD_SIZE], Word *wp, int count);
+void display_clues(Clue clues[], int placed_word_count);
+int place_words(char board[][BOARD_SIZE], Word *wp, int count, Word placed_words[]);
 Letter get_intersection(char board[][BOARD_SIZE], Word *wp, int amt_tried);
 int check_pos(char board[][BOARD_SIZE], Word *wp, Letter letter);
+void generate_anagrams(Clue clues[], int count);
+void scramble(char word[]);
