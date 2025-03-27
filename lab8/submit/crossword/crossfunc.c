@@ -69,24 +69,24 @@ void vplace(char board[][BOARD_SIZE], Word *wp) {
     board[wp->posr + i][wp->posc] = wp->word[i];
 }
 
-void display(char board[][BOARD_SIZE]) {
+void display(FILE *fp, char board[][BOARD_SIZE]) {
   for (int x = 0; x < BOARD_SIZE + 2; x++) {
     if (x == 0 || x == 16) {
       for (int y = 0; y < BOARD_SIZE + 2; y++) {
-	printf("-");
+	fprintf(fp, "-");
       }
-      printf("\n");
+      fprintf(fp, "\n");
     } else {
-      printf("|");
+      fprintf(fp, "|");
       for (int y = 0; y < BOARD_SIZE; y++) {
-	printf("%c", board[x-1][y]);
+	fprintf(fp, "%c", board[x-1][y]);
       }
-      printf("|\n");
+      fprintf(fp, "|\n");
     }
   }
 }
 
-void display_boards(char board[][BOARD_SIZE]) {
+void display_boards(FILE *fp, char board[][BOARD_SIZE]) {
   char sol_board[BOARD_SIZE][BOARD_SIZE];
   init_board(sol_board);
   char empty_board[BOARD_SIZE][BOARD_SIZE];
@@ -104,16 +104,16 @@ void display_boards(char board[][BOARD_SIZE]) {
     }
   }
   
-  printf("SOLUTION:\n");
-  display(sol_board);
+  fprintf(fp, "SOLUTION:\n");
+  display(fp, sol_board);
 
-  printf("\nPUZZLE:\n");
-  display(empty_board);
+  fprintf(fp, "\nPUZZLE:\n");
+  display(fp, empty_board);
 }
 
-void display_clues(Clue clues[], int placed_word_count) {
+void display_clues(FILE *fp, Clue clues[], int placed_word_count) {
   // Print header
-  printf("Location | Direction | Anagram\n");
+  fprintf(fp, "Location | Direction | Anagram\n");
   for (int i = 0; i < placed_word_count; i++) {
     char dir[20];
     if (clues[i].orientation == 'v') {
@@ -121,7 +121,7 @@ void display_clues(Clue clues[], int placed_word_count) {
     } else if (clues[i].orientation == 'h') {
       strcpy(dir, "Across");
     }
-    printf("%4d,%-4d| %9s | %s\n", clues[i].posr + 1, clues[i].posc + 1, dir, clues[i].anagram);
+    fprintf(fp, "%4d,%-4d| %9s | %s\n", clues[i].posr + 1, clues[i].posc + 1, dir, clues[i].anagram);
   }
 }
 
