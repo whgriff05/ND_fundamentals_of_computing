@@ -13,7 +13,7 @@ typedef struct {
   int order;
   int posr;
   int posc;
-  char orient;
+  char orientation;
 } Word;
 
 typedef struct {
@@ -29,6 +29,8 @@ int is_str_alpha(char str[]);
 void sort(Word words[], int count);
 void init_board(char board[][BOARD_SIZE]);
 void hplace(char board[][BOARD_SIZE], Word *wp);
+void vplace(char board[][BOARD_SIZE], Word *wp);
 void display(char board[][BOARD_SIZE]);
 void place_words(char board[][BOARD_SIZE], Word *wp, int count);
-Letter get_intersection(Word *wp, int amt_tried);
+Letter get_intersection(char board[][BOARD_SIZE], Word *wp, int amt_tried);
+int check_pos(char board[][BOARD_SIZE], Word *wp, Letter letter);

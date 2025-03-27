@@ -9,11 +9,19 @@ int main(int argc, char *argv[]) {
   Word words[MAX_WORDS];
   Word *wp = words;
 
+  FILE *input;
+  FILE *output;
+
   if (argc == 1) {
     // Get words and word count from user
     word_count = get_words(stdin, words);
   } else if (argc == 2) {
-    printf("TODO: implement\n");
+    input = fopen(argv[1], "r");
+    if (!input) {
+      printf("Error: file %s not found\n", argv[1]);
+      return -1;
+    } 
+    word_count = get_words(input, words);
   } else if (argc == 3) {
     printf("TODO: implement\n");
   } else {
