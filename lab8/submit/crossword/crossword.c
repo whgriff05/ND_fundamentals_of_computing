@@ -9,13 +9,13 @@ int main(int argc, char *argv[]) {
   Word words[MAX_WORDS];
   Word *wp = words;
 
-  FILE *input;
-  FILE *output;
+  FILE *input = stdin;
+  FILE *output = stdout;
 
   if (argc == 1) {
     // Get words and word count from user
     printf("Please enter up to 20 words followed by a '.'\n");
-    word_count = get_words(stdin, words);
+    word_count = get_words(input, words);
   } else if (argc == 2) {
     input = fopen(argv[1], "r");
     if (!input) {
@@ -24,9 +24,22 @@ int main(int argc, char *argv[]) {
     } 
     word_count = get_words(input, words);
   } else if (argc == 3) {
-    printf("TODO: implement\n");
+    input = fopen(argv[1], "r");
+    output = fopen(argv[2], "w");
+    if (!input) {
+      printf("Error: file %s not found\n", argv[1]);
+      return -1;
+    }
+    if (!output) {
+      printf("Error: file %s not found\n", argv[2]);
+      return -1;
+    } 
+    word_count = get_words(input, words);
   } else {
-    printf("TODO: implement\n");
+    printf("Error: too many arguments\n");
+    printf("Usage: ./runcrossword\n");
+    printf("       ./runcrossword <input file>\n");
+    printf("       ./runcrossword <input file> <output file>\n");
     return -1;
   }
 
@@ -50,10 +63,10 @@ int main(int argc, char *argv[]) {
   generate_anagrams(clues, placed_word_count);
 
   // Display boards
-  display_boards(board);
+  display_boards(output, board);
 
   // Display clues
-  display_clues(clues, placed_word_count);
+  display_clues(output, clues, placed_word_count);
 
   return 0;
 }
