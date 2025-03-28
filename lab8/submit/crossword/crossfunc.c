@@ -148,7 +148,6 @@ int place_words(char board[][BOARD_SIZE], Word *wp, int count, Word placed_words
     Letter letter = get_intersection(board, wp, amt_tried);
 
     if (letter.letter == '!') {
-      printf("Found a non-intersection with word %s\n", wp->word);
       break;
     }
     
