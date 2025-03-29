@@ -23,7 +23,18 @@ int get_words(FILE *fp, Word words[]) {
 
     if (!strcmp(".", current_word)) break;
 
-    if (!is_str_alpha(current_word)) break;
+    if (!is_str_alpha(current_word)) {
+      printf("Error: %s is not a recognized word\n", current_word);
+      continue;
+    }
+
+    if (strlen(current_word) > BOARD_SIZE) {
+      printf("Error: %s is too long of a word (%d letters max)\n", current_word, BOARD_SIZE);
+      continue;
+    } else if (strlen(current_word) <= 1) {
+      printf("Error: %s is too short of a word (>1 letters min)\n", current_word);
+      continue;
+    }
     
     to_caps(current_word);
     strcpy(words[count].word, current_word);
