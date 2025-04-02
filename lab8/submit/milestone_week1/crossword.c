@@ -46,6 +46,7 @@ int main(int argc, char *argv[]) {
   // Sort the words in descending order
   sort(words, word_count);
 
+
   
 
   /*
@@ -61,11 +62,13 @@ int main(int argc, char *argv[]) {
   wp->posc = (BOARD_SIZE / 2) - (wp->length / 2);
   wp->orientation = 'h';
 
+
   // Place the word
   hplace(board, wp);
   wp++;
 
   Letter letter = get_intersection(board, wp, 1);
+
 
   if (letter.letter == '!') {
     printf("Unable to place word %s\n", wp->word);
@@ -74,6 +77,7 @@ int main(int argc, char *argv[]) {
   wp->posc = letter.intersect->posc + letter.offset_intersect;
   wp->orientation = 'v';
   vplace(board, wp);
+
     
   
   // Generate clues

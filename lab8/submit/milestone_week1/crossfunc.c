@@ -16,7 +16,7 @@ void to_caps(char str[]) {
 int get_words(FILE *fp, Word words[]) {
   int count = 0;
   while (1) {
-    char current_word[BOARD_SIZE + 1];
+    char current_word[50];
     fscanf(fp, "%s", current_word);
 
     if (feof(fp)) break;
