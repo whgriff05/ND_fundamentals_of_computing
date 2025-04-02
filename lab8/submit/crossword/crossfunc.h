@@ -34,6 +34,8 @@ typedef struct {
 } Clue;
 
 // Function Prototypes
+void to_caps(char str[]);
+void stringify(char str[]);
 int get_words(FILE *fp, Word words[]);
 int is_str_alpha(char str[]);
 void sort(Word words[], int count);

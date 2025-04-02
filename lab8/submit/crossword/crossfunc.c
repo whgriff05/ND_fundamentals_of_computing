@@ -13,11 +13,29 @@ void to_caps(char str[]) {
   }
 }
 
+void stringify(char str[]) {
+  for (int i = 0; i < strlen(str); i++) {
+    if (str[i] == '\n') str[i] = '\0';
+  }
+  
+}
+
 int get_words(FILE *fp, Word words[]) {
   int count = 0;
   while (1) {
-    char current_word[50];
-    fscanf(fp, "%s", current_word);
+    char current_word[BOARD_SIZE + 1];
+
+    fgets(current_word, 16, fp);
+    if (strlen(current_word) >= BOARD_SIZE) {
+      if (current_word[strlen(current_word)] != '\n') {
+	while (1) {
+	  if (fgetc(fp) == '\n') break;
+	}
+	printf("Error: too long of a word (%d letters max)\n", BOARD_SIZE);
+	continue;
+      }
+    }
+    stringify(current_word);
 
     if (feof(fp)) break;
 
@@ -28,11 +46,8 @@ int get_words(FILE *fp, Word words[]) {
       continue;
     }
 
-    if (strlen(current_word) > BOARD_SIZE) {
-      printf("Error: %s is too long of a word (%d letters max)\n", current_word, BOARD_SIZE);
-      continue;
-    } else if (strlen(current_word) <= 1) {
-      printf("Error: %s is too short of a word (>1 letters min)\n", current_word);
+    if (strlen(current_word) <= 1) {
+      printf("Error: too short of a word (>1 letters min)\n");
       continue;
     }
     
