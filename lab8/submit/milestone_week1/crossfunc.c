@@ -132,7 +132,7 @@ void display_clues(FILE *fp, Clue clues[], int placed_word_count) {
     } else if (clues[i].orientation == 'h') {
       strcpy(dir, "Across");
     }
-    fprintf(fp, "%4d,%-4d| %9s | %s\n", clues[i].posr + 1, clues[i].posc + 1, dir, clues[i].anagram);
+    fprintf(fp, "%4d,%-4d| %9s | %s\n", clues[i].posr + 1, clues[i].posc + 1, dir, clues[i].sol);
   }
 }
 
