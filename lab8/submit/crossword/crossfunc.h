@@ -15,6 +15,7 @@ typedef struct {
   int order;
   int posr;
   int posc;
+  int placed;
   char orientation;
 } Word;
 
@@ -45,8 +46,8 @@ void vplace(char board[][BOARD_SIZE], Word *wp);
 void display(FILE *fp, char board[][BOARD_SIZE]);
 void display_boards(FILE *fp, char board[][BOARD_SIZE]);
 void display_clues(FILE *fp, Clue clues[], int placed_word_count);
-int place_words(char board[][BOARD_SIZE], Word *wp, int count, Word placed_words[]);
-Letter get_intersection(char board[][BOARD_SIZE], Word *wp, int amt_tried);
+int place_words(char board[][BOARD_SIZE], Word *wp, int count, Word placed_words[], int placed_count);
+Letter get_intersection(char board[][BOARD_SIZE], Word *wp, int amt_tried, int total);
 int check_pos(char board[][BOARD_SIZE], Word *wp, Letter letter);
 void generate_anagrams(Clue clues[], int count);
 void scramble(char word[]);
