@@ -22,16 +22,18 @@ void stringify(char str[]) {
 
 int get_words(FILE *fp, Word words[]) {
   int count = 0;
+  int overall_count = 1;
   while (1) {
     char current_word[BOARD_SIZE + 1];
 
     fgets(current_word, 16, fp);
     if (strlen(current_word) >= BOARD_SIZE) {
-      if (current_word[strlen(current_word)] != '\n') {
+      if (current_word[strlen(current_word)] != '\n' && fgetc(fp) != '\n') {
 	while (1) {
 	  if (fgetc(fp) == '\n') break;
 	}
-	printf("Error: too long of a word (%d letters max)\n", BOARD_SIZE);
+	printf("Error: Word #%d is too long of a word (%d letters max)\n", overall_count, BOARD_SIZE);
+	overall_count++;
 	continue;
       }
     }
@@ -42,19 +44,23 @@ int get_words(FILE *fp, Word words[]) {
     if (!strcmp(".", current_word)) break;
 
     if (!is_str_alpha(current_word)) {
-      printf("Error: %s is not a recognized word\n", current_word);
+      printf("Error: Word #%d is not a recognized word (only use A-Z)\n", overall_count);
+      overall_count++;
       continue;
     }
 
     if (strlen(current_word) <= 1) {
-      printf("Error: too short of a word (>1 letters min)\n");
+      printf("Error: Word #%d is too short of a word (>1 letters min)\n", overall_count);
+      overall_count++;
       continue;
     }
     
     to_caps(current_word);
     strcpy(words[count].word, current_word);
     words[count].length = strlen(current_word);
+    words[count].placed = 0;
 
+    overall_count++;
     count++;
 
     if (count >= 20) break;
@@ -151,10 +157,11 @@ void display_clues(FILE *fp, Clue clues[], int placed_word_count) {
   }
 }
 
-int place_words(char board[][BOARD_SIZE], Word *wp, int count, Word placed_words[]) {
+int place_words(char board[][BOARD_SIZE], Word *wp, int count, Word placed_words[], int placed_count) {
   int amt_tried = 0;
+  int amt_success = 0;
   // Check if first word
-  if (wp->order == 0) {
+  if (wp->order == 0 && !wp->placed) {
     // Calculate starting positions
     wp->posr = (BOARD_SIZE / 2);
     wp->posc = (BOARD_SIZE / 2) - (wp->length / 2);
@@ -162,6 +169,7 @@ int place_words(char board[][BOARD_SIZE], Word *wp, int count, Word placed_words
 
     // Place the word
     hplace(board, wp);
+    wp->placed = 1;
 
     // Add to record
     placed_words[amt_tried] = *wp;
@@ -169,12 +177,20 @@ int place_words(char board[][BOARD_SIZE], Word *wp, int count, Word placed_words
     // Increment the word pointer and the amount tried
     wp++;
     amt_tried++;
+    amt_success++;
   }
   while (amt_tried < count) {
-    Letter letter = get_intersection(board, wp, amt_tried);
+    if (wp->placed) {
+      wp++;
+      amt_tried++;
+      continue;
+    }
+    Letter letter = get_intersection(board, wp, amt_tried, count);
 
     if (letter.letter == '!') {
-      break;
+      wp++;
+      amt_tried++;
+      continue;
     }
     
     int posr, posc;
@@ -194,39 +210,46 @@ int place_words(char board[][BOARD_SIZE], Word *wp, int count, Word placed_words
       wp->posc = posc;
       wp->orientation = 'h';
       hplace(board, wp);
-    } 
-    placed_words[amt_tried] = *wp;
+    }
+    wp->placed = 1;
+    
+    placed_words[amt_success + placed_count] = *wp;
     wp++;
     amt_tried++;
+    amt_success++;
   }
 
-  return amt_tried;
+  return amt_success;
   
 }
 
-Letter get_intersection(char board[][BOARD_SIZE], Word *wp, int amt_tried) {
+Letter get_intersection(char board[][BOARD_SIZE], Word *wp, int amt_tried, int total) {
   Letter letter;
   Word *current = wp;
-  
-  wp--;
-  
-  for (int i = amt_tried; i > 0; i--) {
-    for (int j = 0; j < current->length; j++) {
-      for (int k = 0; k < wp->length; k++) {
 
-	if (current->word[j] == wp->word[k]) {
-	  letter.letter = current->word[j];
-	  letter.offset_current = j;
-	  letter.offset_intersect = k;
-	  letter.intersect = wp;
+  for (int i = 0; i < amt_tried; i++) {
+    wp--;
+  }
+  
+  for (int i = 0; i < total; i++) {
+    if (wp->placed == 1) {
+      for (int j = 0; j < current->length; j++) {
+	for (int k = 0; k < wp->length; k++) {
 
-	  if (check_pos(board, current, letter)) {
-	    return letter;
+	  if (current->word[j] == wp->word[k]) {
+	    letter.letter = current->word[j];
+	    letter.offset_current = j;
+	    letter.offset_intersect = k;
+	    letter.intersect = wp;
+
+	    if (check_pos(board, current, letter)) {
+	      return letter;
+	    }
 	  }
 	}
       }
     }
-    wp--;
+    wp++;
   }
   letter.letter = '!';
   return letter;

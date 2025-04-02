@@ -48,8 +48,9 @@ int main(int argc, char *argv[]) {
 
   // Place words
   Word placed_words[MAX_WORDS];
-  int placed_word_count;
-  placed_word_count = place_words(board, wp, word_count, placed_words);
+  int placed_word_count = 0;
+  placed_word_count = place_words(board, wp, word_count, placed_words, placed_word_count);
+  placed_word_count += place_words(board, wp, word_count, placed_words, placed_word_count);
 
   // Generate clues
   Clue clues[placed_word_count];
