@@ -31,9 +31,14 @@ int get_words(FILE *fp, Word words[]) {
 
     // Take in a word
     fgets(current_word, 16, fp);
+
+    // Convert the \n to \0
+    stringify(current_word);
+    
     // Make sure word isn't too long
     if (strlen(current_word) >= BOARD_SIZE) {
       if (current_word[strlen(current_word)] != '\n' && fgetc(fp) != '\n') {
+	if (feof(fp)) break;
 	while (1) {
 	  if (fgetc(fp) == '\n') break;
 	}
@@ -43,8 +48,7 @@ int get_words(FILE *fp, Word words[]) {
 	continue;
       }
     }
-    // Convert the \n to \0
-    stringify(current_word);
+
 
     // Stop at the end of file
     if (feof(fp)) break;
