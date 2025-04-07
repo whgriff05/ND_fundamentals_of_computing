@@ -105,5 +105,8 @@ int main(int argc, char *argv[]) {
   // Display clues
   display_clues(output, clues, placed_word_count);
 
+  // Close files and exit
+  fclose(input);
+  fclose(output);
   return 0;
 }
