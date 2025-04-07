@@ -78,6 +78,22 @@ int main(int argc, char *argv[]) {
   // Generate clues
   generate_anagrams(clues, placed_word_count);
 
+  printf("\n");
+  
+  // Warn the user of unplaced words
+  int unplaced = 0;
+  for (int i = 0; i < word_count; i++) {
+    if (words[i].placed == 0) unplaced++; 
+  }
+  if (unplaced > 0) {
+    fprintf(output, "These words were unable to be placed:\n");
+    for (int i = 0; i < word_count; i++) {
+      if (words[i].placed == 0) fprintf(output, "%s\n", words[i].word);
+    }
+  }
+
+  printf("\n");
+
   // Display boards
   display_boards(output, board);
 
