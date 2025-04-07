@@ -373,18 +373,27 @@ void generate_anagrams(Clue clues[], int count) {
 
 void scramble(char word[]) {
   int len = strlen(word);
+  char original[len];
+  int count = 0;
+  strcpy(original, word);
   // Scramble
   srand(time(NULL));
-  // For twice the length of the word
-  for (int i = 0; i < len * 2; i++) {
-    // Pick two random characters in the word
-    int i1 = rand() % len;
-    int i2 = rand() % len;
 
-    // Swap the random characters
-    char temp;
-    temp = word[i1];
-    word[i1] = word[i2];
-    word[i2] = temp;
+  while (!strcmp(original, word) && count < 5) {
+    // For twice the length of the word
+    for (int i = 0; i < len * 2; i++) {
+      // Pick two random characters in the word
+      int i1 = rand() % len;
+      int i2 = rand() % len;
+
+      // Swap the random characters
+      char temp;
+      temp = word[i1];
+      word[i1] = word[i2];
+      word[i2] = temp;
+
+      // Backup counter to ensure words like "AAAAA" won't keep this in a loop
+      count++;
+    }
   }
 }
