@@ -1,3 +1,8 @@
+// Name: crossfunc.h
+// Author: Will Griffin
+// Class: CSE 20311 - Fundamentals of Computing
+// Assignment: Lab 8 Header File
+// Description: Crossword
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>

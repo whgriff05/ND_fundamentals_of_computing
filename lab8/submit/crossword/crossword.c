@@ -1,3 +1,8 @@
+// Name: crossword.c
+// Author: Will Griffin
+// Class: CSE 20311 - Fundamentals of Computing
+// Assignment: Lab 8 Driver
+// Description: Crossword
 #include "crossfunc.h"
 
 int main(int argc, char *argv[]) {

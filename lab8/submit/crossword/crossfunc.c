@@ -1,3 +1,8 @@
+// Name: crossfunc.c
+// Author: Will Griffin
+// Class: CSE 20311 - Fundamentals of Computing
+// Assignment: Lab 8 Functions
+// Description: Crossword
 #include "crossfunc.h"
 
 int is_str_alpha(char str[]) {
