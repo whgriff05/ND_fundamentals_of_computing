@@ -62,6 +62,9 @@ int main() {
     default:
       break;
     }
+
+    // Flush the output to the screen
+    gfx_flush();
   }
 
   return 0;
