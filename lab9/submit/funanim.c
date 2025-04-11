@@ -115,7 +115,7 @@ void place_cars(Circle circle) {
     int right_ptx = top_ptx + CART_SIZE;
     int right_pty = top_pty + CART_SIZE;
 
-    
+
     gfx_line(top_ptx, top_pty, left_ptx, left_pty);
     gfx_line(left_ptx, left_pty, right_ptx, right_pty);
     gfx_line(right_ptx, right_pty, top_ptx, top_pty);
