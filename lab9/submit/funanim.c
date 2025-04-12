@@ -88,7 +88,7 @@ int main() {
     gfx_flush();
 
     
-    usleep(230000);
+    usleep(50000);
   }
 
   return 0;
