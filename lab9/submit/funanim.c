@@ -26,7 +26,8 @@ typedef struct {
 // Function Prototypes
 void rotate_circle(Circle *circle, int clockwise);
 void place_cars(Circle circle);
-void solid_triangle(int tx, int ty, int lx, int ly, int rx, int ry);
+void place_triangle(int tx, int ty, int lx, int ly, int rx, int ry);
+void move_sun(Circle *sun_rotation, int clockwise);
 
 int main() {
   char c;
@@ -36,8 +37,12 @@ int main() {
   // Open the window
   gfx_open(WIN_WIDTH, WIN_HEIGHT, "Rotating Animation");
 
-  // Declare the circle
+  // Declare the wheel
   Circle wheel = {WIN_WIDTH / 2, WIN_HEIGHT / 2, 150, 0};
+
+
+  // Declare and initialize the sun's rotational pattern
+  Circle sun_rotation = {0, WIN_HEIGHT / 2, 30, M_PI};
 
   // Set the background to white
   gfx_clear_color(166, 215, 227);
@@ -55,26 +60,35 @@ int main() {
 
     gfx_clear();
 
-    // Base
+    // Base of ferris wheel
     int top_ptx = wheel.px;
     int top_pty = wheel.py;
     int left_ptx = top_ptx - wheel.radius;
     int left_pty = top_pty + wheel.radius * 1.5;
     int right_ptx = top_ptx + wheel.radius;
     int right_pty = top_pty + wheel.radius * 1.5;
-    gfx_line(top_ptx, top_pty, left_ptx, left_pty);
-    gfx_line(left_ptx, left_pty, right_ptx, right_pty);
-    gfx_line(right_ptx, right_pty, top_ptx, top_pty);
-    
+    gfx_color(0, 0, 0);
+    place_triangle(top_ptx, top_pty, left_ptx, left_pty, right_ptx, right_pty);
+
+    // Place/rotate the wheel
     rotate_circle(&wheel, clockwise);
+
+    // Place the cars
     place_cars(wheel);
+
+    // Place and move the sun
+    move_sun(&sun_rotation, clockwise);
+
+    // Text
+    gfx_color(0, 0, 0);
+    gfx_text(top_ptx - 80, left_pty + 20, "< and > to switch rotation");
 
 
 
     gfx_flush();
 
     
-    usleep(100000);
+    usleep(230000);
   }
 
   return 0;
@@ -115,34 +129,48 @@ void place_cars(Circle circle) {
     int right_ptx = top_ptx + CART_SIZE;
     int right_pty = top_pty + CART_SIZE;
 
-
-    gfx_line(top_ptx, top_pty, left_ptx, left_pty);
-    gfx_line(left_ptx, left_pty, right_ptx, right_pty);
-    gfx_line(right_ptx, right_pty, top_ptx, top_pty);
+    place_triangle(top_ptx, top_pty, left_ptx, left_pty, right_ptx, right_pty);
     
-
-    //solid_triangle(top_ptx, top_pty, left_ptx, left_pty, right_ptx, right_pty);
   }
 }
 
-void solid_triangle(int tx, int ty, int lx, int ly, int rx, int ry) {
-  // Color to pink
-  gfx_color(214, 21, 115);
-  int top_ptx = tx;
-  int top_pty = ty;
-  int left_ptx = lx;
-  int left_pty = ly;
-  int right_ptx = rx;
-  int right_pty = ry;
-  
-  for (int i = 0; i <= abs(tx - lx); i++) {
-    gfx_line(top_ptx, top_pty, left_ptx, left_pty);
-    gfx_line(left_ptx, left_pty, right_ptx, right_pty);
-    gfx_line(right_ptx, right_pty, top_ptx, top_pty);
+void place_triangle(int tx, int ty, int lx, int ly, int rx, int ry) {
 
-    top_pty++;
-    left_ptx++; left_pty--;
-    right_ptx--; right_pty--;
+  // Place the triangle
+  gfx_line(tx, ty, lx, ly);
+  gfx_line(lx, ly, rx, ry);
+  gfx_line(rx, ry, tx, ty);
+
+}
+
+void move_sun(Circle *sun_rotation, int clockwise) {
+  if (clockwise) {
+    // Move the position and angle of the sun
+    sun_rotation->px = (WIN_WIDTH / 2) * cos(sun_rotation->angle) + (WIN_WIDTH / 2);
+    sun_rotation->py = (WIN_HEIGHT / 2) * sin(sun_rotation->angle) + (WIN_HEIGHT / 2);
+    sun_rotation->angle += (M_PI / 54);
+
+    // If the sun goes past the horizon, set the position to the opposite side of the screen
+    if (sun_rotation->angle >= M_PI * 2) {
+      sun_rotation->px = 0;
+      sun_rotation->py = WIN_HEIGHT / 2;
+      sun_rotation->angle = M_PI;
+    }
+  } else {
+    // Move the position and angle of the sun
+    sun_rotation->px = (WIN_WIDTH / 2) * cos(sun_rotation->angle) + (WIN_WIDTH / 2);
+    sun_rotation->py = (WIN_HEIGHT / 2) * sin(sun_rotation->angle) + (WIN_HEIGHT / 2);
+    sun_rotation->angle -= (M_PI / 54);
+
+    // If the sun goes past the horizon, set the position to the opposite side of the screen
+    if (sun_rotation->angle <= M_PI) {
+      sun_rotation->px = (WIN_WIDTH / 2) * cos(2 * M_PI) + (WIN_WIDTH / 2);
+      sun_rotation->py = WIN_HEIGHT / 2;
+      sun_rotation->angle = 2 * M_PI;
+    }
   }
 
+  // Display the circle
+  gfx_color(204, 184, 53);
+  gfx_circle(sun_rotation->px, sun_rotation->py, sun_rotation->radius);
 }
