@@ -67,8 +67,8 @@ int main(int argc, char *argv[]) {
 
   // Continue placing words until no more words can be placed
   while (previous_pwc != placed_word_count) {
-    placed_word_count += place_words(board, wp, word_count, placed_words, placed_word_count);
     previous_pwc = placed_word_count;
+    placed_word_count += place_words(board, wp, word_count, placed_words, placed_word_count);
   }
 
 
