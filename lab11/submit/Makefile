@@ -23,6 +23,7 @@ EXEC = project
 
 $(EXEC): $(FUNC).o $(MAIN).o
 	$(CC) $(FUNC).o $(MAIN).o $(GFX).o $(CFLAGS) $(LIB) -o $(EXEC)
+	@echo "Compiling for $(UNAME_S)"
 
 $(FUNC).o: $(FUNC).c $(FUNC).h
 	$(CC) -c $(FUNC).c $(CFLAGS) $(INC) -o $(FUNC).o
