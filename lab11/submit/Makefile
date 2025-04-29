@@ -23,10 +23,10 @@ $(EXEC): $(FUNC).o $(MAIN).o
 	$(CC) $(FUNC).o $(MAIN).o $(GFX).o $(CFLAGS) $(LIB) -o $(EXEC)
 
 $(FUNC).o: $(FUNC).c $(FUNC).h
-	$(CC) -c $(FUNC).c $(CFLAGS) $(LIB) -o $(FUNC).o
+	$(CC) -c $(FUNC).c $(CFLAGS) -o $(FUNC).o
 
 $(MAIN).o: $(MAIN).c $(FUNC).h
-	$(CC) -c $(MAIN).c $(CFLAGS) $(LIB) -o $(MAIN).o
+	$(CC) -c $(MAIN).c $(CFLAGS) -o $(MAIN).o
 
 clean:
 	rm $(FUNC).o $(MAIN).o
