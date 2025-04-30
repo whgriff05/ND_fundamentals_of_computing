@@ -1,0 +1,91 @@
+// Name: projectfunc.c
+// Author: Will Griffin
+// Class: CSE 20311 - Fundamentals of Computing
+// Assignment: Lab 11 Function File
+// Description: Mini Final Project
+#include "projectfunc.h"
+
+void stringify(char str[], int length) {
+  str[length - 1] = '\0';
+}
+
+void bordered_rectangle(int x, int y, int w, int h, int pad, Color border, Color inside) {
+  gfx_color(border.r, border.g, border.b);
+  gfx_fill_rectangle(x, y, w, h);
+
+  gfx_color(inside.r, inside.g, inside.b);
+  gfx_fill_rectangle(x + pad, y + pad, w - (2 * pad), h - (2 * pad));
+}
+
+void bordered_square_radius(LetterSquare s) {
+  bordered_rectangle(s.cx - s.rad, s.cy - s.rad, 2 * s.rad, 2 * s.rad, s.pad, s.border, s.inside);
+}
+
+    FILE* open_file(int current_file) {
+    char filename[20];
+    sprintf(filename, "word_files/%d.word", current_file);
+    FILE *fp = fopen(filename, "r");
+
+    return fp;
+  }
+
+  Puzzle open_puzzle(FILE* file) {
+    Puzzle output;
+
+    fscanf(file, "%c", &output.central);
+    fscanf(file, "%s", output.letters);
+  
+    int count = 0;
+    while (1) {
+      fscanf(file, "%s", output.answers[count]);
+
+      count++;
+
+      if (feof(file)) break;
+    }
+    output.answer_count = count;
+
+    return output;
+  }
+
+void init_play_letters(Puzzle puzzle, LetterSquare play_letters[]) {
+  // Middle square
+  play_letters[0].letter = puzzle.central;
+  play_letters[0].cx = WIN_WIDTH / 2;
+  play_letters[0].cy = WIN_HEIGHT / 2 + 20;
+  play_letters[0].rad = 20;
+  play_letters[0].pad = 5;
+
+  // External squares
+  for (int i = 0; i < MAX_PUZZLE - 1; i++) {
+    play_letters[i + 1].letter = puzzle.letters[i];
+    play_letters[i + 1].cx = (WIN_WIDTH / 2) + 75 * cos(M_PI / 3 * i);
+    play_letters[i + 1].cy = (WIN_HEIGHT / 2 + 20) + 75 * sin(M_PI / 3 * i);
+    play_letters[i + 1].rad = 20;
+    play_letters[i + 1].pad = 5;
+  }
+    
+}
+
+void init_answer_letters(LetterSquare answer_letters[]) {
+  for (int i = 0; i < 10; i++) {
+    answer_letters[i].letter = ' ';
+    answer_letters[i].cx = 180 + 50 * i;
+    answer_letters[i].cy = 85;
+    answer_letters[i].rad = 20;
+    answer_letters[i].pad = 5;
+  }
+}
+
+int get_clicked_square(LetterSquare play_letters[]) {
+  int xpos = gfx_xpos();
+  int ypos = gfx_ypos();
+  for (int i = 0; i < MAX_PUZZLE; i++) {
+    if (xpos >= play_letters[i].cx - play_letters[i].rad && xpos <= play_letters[i].cx + play_letters[i].rad) {
+      if (ypos >= play_letters[i].cy - play_letters[i].rad && ypos <= play_letters[i].cy + play_letters[i].rad) {
+	return i;
+      }
+    }
+  }
+  return -1;
+}
