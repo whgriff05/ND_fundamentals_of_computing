@@ -86,7 +86,7 @@ int main() {
 
       gfx_color(0, 0, 0);
       gfx_text(330, WIN_HEIGHT / 2, "Welcome to Spelling Bee!");
-      gfx_text(325, WIN_HEIGHT / 2 + 20, "Press any key to continue");
+      gfx_text(327, WIN_HEIGHT / 2 + 20, "Press any key to continue");
       
       gfx_flush();
       gfx_wait();
@@ -148,9 +148,46 @@ int main() {
 	  sprintf(prev_output_msg, " ");
 	} else if (clicked_square == 30) {
 	  printf("%d - Give Up\n", clicked_square);
+	  if (current_file == MAX_FILE) current_screen = END;
+	  if (current_file < MAX_FILE) current_screen = IN_BETWEEN;
 	}
 
       }
+      break;
+
+    case IN_BETWEEN:
+      display_end_puzzle(current_puzzle, current_file, border, inside_yellow);
+
+      gfx_wait();
+
+      current_file++;
+      file = open_file(current_file);
+      if (!file) {
+	printf("Error: word file %d.word not found", current_file);
+	return 1;
+      }
+
+      // Read the puzzle
+      current_puzzle = open_puzzle(file);
+
+      init_play_letters(current_puzzle, play_letters);
+      play_letters[0].border = border;
+      play_letters[0].inside = inside_yellow;
+      for (int i = 1; i < MAX_PUZZLE; i++) {
+	play_letters[i].border = border;
+	play_letters[i].inside = inside_grey;
+      }
+      
+      fresh_answer(answer_letters, border, inside_grey, &current_answer_letter);
+
+      current_screen = PLAY;
+      break;
+
+    case END:
+      display_end_puzzle(current_puzzle, current_file, border, inside_yellow);
+
+      gfx_wait();
+      running = 0;
       break;
       
     default:

@@ -64,3 +64,4 @@ void init_play_letters(Puzzle puzzle, LetterSquare play_letters[]);
 void init_answer_letters(LetterSquare answer_letters[]);
 int get_clicked_square(LetterSquare play_letters[], LetterSquare submit, LetterSquare clear, LetterSquare give_up);
 int check_answer(LetterSquare answer_letters[], Puzzle *puzzle);
+void display_end_puzzle(Puzzle current_puzzle, int current_file, Color border, Color inside);
