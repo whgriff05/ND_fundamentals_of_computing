@@ -119,7 +119,6 @@ int check_answer(LetterSquare answer_letters[], Puzzle *puzzle) {
   for (int i = 0; i < puzzle->answer_count; i++) {
     if (!strcmp(puzzle->answers[i], word)) {
       for (int j = 0; j < puzzle->amount_found; j++) {
-	printf("%d - %d\n", puzzle->already_found[j], i);
 	if (puzzle->already_found[j] == i) return -2;
       }
       puzzle->already_found[puzzle->amount_found] = i;
@@ -139,12 +138,12 @@ void display_end_puzzle(Puzzle current_puzzle, int current_file, Color border, C
   float perc = (float) current_puzzle.amount_found / (float) current_puzzle.answer_count * 100;
 
   sprintf(results_text_puzzle, "Puzzle %d/%d", current_file, MAX_FILE);
-  sprintf(results_text_1, "You correctly found %d words!", current_puzzle.amount_found);
+  sprintf(results_text_1, "You correctly found %d/%d words!", current_puzzle.amount_found, current_puzzle.answer_count);
   sprintf(results_text_2, "You solved %.2f%% of the puzzle", perc);
       
   gfx_color(0, 0, 0);
   gfx_text(385, WIN_HEIGHT / 2 - 20, results_text_puzzle);
-  gfx_text(325, WIN_HEIGHT / 2, results_text_1);
+  gfx_text(317, WIN_HEIGHT / 2, results_text_1);
   gfx_text(320, WIN_HEIGHT / 2 + 20, results_text_2);
   if (current_file != MAX_FILE) {
     gfx_text(335, WIN_HEIGHT / 2 + 40, "Press any key to continue");    

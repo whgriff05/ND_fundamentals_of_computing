@@ -123,11 +123,9 @@ int main() {
 	if (clicked_square == -1) break;
 	if (clicked_square >= 0 && clicked_square <= 6) {
 	  if (clicked_square == 0) answer_letters[current_answer_letter].inside = inside_yellow;
-	  printf("%d - %c\n", clicked_square, play_letters[clicked_square].letter);
 	  answer_letters[current_answer_letter].letter = play_letters[clicked_square].letter;
 	  current_answer_letter++;
 	} else if (clicked_square == 10) {
-	  printf("%d - Submit\n", clicked_square);
 	  int success = check_answer(answer_letters, &current_puzzle);
 	  if (success >= 0) {
 	    sprintf(prev_output_msg, "Correct: %s", current_puzzle.answers[success]);
@@ -143,11 +141,9 @@ int main() {
 	  }
 	  fresh_answer(answer_letters, border, inside_grey, &current_answer_letter);
 	} else if (clicked_square == 20) {
-	  printf("%d - Clear\n", clicked_square);
 	  fresh_answer(answer_letters, border, inside_grey, &current_answer_letter);
 	  sprintf(prev_output_msg, " ");
 	} else if (clicked_square == 30) {
-	  printf("%d - Give Up\n", clicked_square);
 	  if (current_file == MAX_FILE) current_screen = END;
 	  if (current_file < MAX_FILE) current_screen = IN_BETWEEN;
 	}
@@ -179,6 +175,8 @@ int main() {
       }
       
       fresh_answer(answer_letters, border, inside_grey, &current_answer_letter);
+
+      strcpy(prev_output_msg, " ");
 
       current_screen = PLAY;
       break;

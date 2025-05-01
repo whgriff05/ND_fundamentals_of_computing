@@ -13,9 +13,9 @@
 #define WIN_WIDTH 800
 #define WIN_HEIGHT 600
 #define MAX_PUZZLE 7
-#define MAX_ANSWERS 50
+#define MAX_ANSWERS 125
 #define MAX_LETTERS_ANSWER 20
-#define MAX_FILE 2
+#define MAX_FILE 5
 
 
 // Structs
