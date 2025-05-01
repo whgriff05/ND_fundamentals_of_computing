@@ -5,10 +5,6 @@
 // Description: Mini Final Project
 #include "projectfunc.h"
 
-void stringify(char str[], int length) {
-  str[length - 1] = '\0';
-}
-
 void bordered_rectangle(int x, int y, int w, int h, int pad, Color border, Color inside) {
   gfx_color(border.r, border.g, border.b);
   gfx_fill_rectangle(x, y, w, h);

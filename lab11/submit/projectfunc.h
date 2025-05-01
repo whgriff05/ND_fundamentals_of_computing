@@ -52,9 +52,6 @@ typedef enum {
 } ProjectScreen;
 
 // Function Prototypes
-void stringify(char str[], int length);
-
-
 void bordered_rectangle(int x, int y, int w, int h, int pad, Color border, Color inside);
 void bordered_square_radius(LetterSquare s);
 
