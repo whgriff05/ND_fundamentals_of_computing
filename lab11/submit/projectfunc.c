@@ -44,6 +44,7 @@ void bordered_square_radius(LetterSquare s) {
       if (feof(file)) break;
     }
     output.answer_count = count;
+    output.amount_found = 0;
 
     return output;
   }
@@ -77,7 +78,7 @@ void init_answer_letters(LetterSquare answer_letters[]) {
   }
 }
 
-int get_clicked_square(LetterSquare play_letters[]) {
+int get_clicked_square(LetterSquare play_letters[], LetterSquare submit, LetterSquare clear) {
   int xpos = gfx_xpos();
   int ypos = gfx_ypos();
   for (int i = 0; i < MAX_PUZZLE; i++) {
@@ -85,6 +86,40 @@ int get_clicked_square(LetterSquare play_letters[]) {
       if (ypos >= play_letters[i].cy - play_letters[i].rad && ypos <= play_letters[i].cy + play_letters[i].rad) {
 	return i;
       }
+    }
+  }
+  if (xpos >= submit.cx - submit.rad && xpos <= submit.cx + submit.rad) {
+    if (ypos >= submit.cy - submit.rad && ypos <= submit.cy + submit.rad) {
+      return 10;
+    }
+  }
+  if (xpos >= clear.cx - clear.rad && xpos <= clear.cx + clear.rad) {
+    if (ypos >= clear.cy - clear.rad && ypos <= clear.cy + clear.rad) {
+      return 20;
+    }
+  }
+  return -1;
+}
+
+int check_answer(LetterSquare answer_letters[], Puzzle *puzzle) {
+  char word[11];
+  for (int i = 0; i < 10; i++) {
+    if (answer_letters[i].letter == ' ') {
+      word[i] = '\0';
+      break;
+    }
+    word[i] = answer_letters[i].letter;
+  }
+
+  for (int i = 0; i < puzzle->answer_count; i++) {
+    if (!strcmp(puzzle->answers[i], word)) {
+      for (int j = 0; j < puzzle->amount_found; j++) {
+	printf("%d - %d\n", puzzle->already_found[j], i);
+	if (puzzle->already_found[j] == i) return -2;
+      }
+      puzzle->already_found[puzzle->amount_found] = i;
+      puzzle->amount_found++;
+      return i;
     }
   }
   return -1;

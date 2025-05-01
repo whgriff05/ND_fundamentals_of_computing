@@ -5,13 +5,17 @@
 // Description: Mini Final Project
 #include "projectfunc.h"
 
+void fresh_answer(LetterSquare answer[], Color border, Color inside_grey, int *current);
+
 int main() {
 
   // Variables
   int current_file = 1;
   int running = 1;
+  int current_answer_letter = 0;
 
   char event;
+  char prev_output_msg[60] = " ";
 
   ProjectScreen current_screen = STARTING;
 
@@ -25,6 +29,8 @@ int main() {
 
   LetterSquare play_letters[MAX_PUZZLE];
   LetterSquare answer_letters[10];
+  LetterSquare submit;
+  LetterSquare clear;
 
 
   // Open the file
@@ -48,11 +54,20 @@ int main() {
     play_letters[i].border = border;
     play_letters[i].inside = inside_grey;
   }
-  init_answer_letters(answer_letters);
-  for (int i = 0; i < 10; i++) {
-    answer_letters[i].border = border;
-    answer_letters[i].inside = inside_grey;
-  }
+  fresh_answer(answer_letters, border, inside_grey, &current_answer_letter);
+  submit.cx = WIN_WIDTH / 4 * 3;
+  submit.cy = WIN_HEIGHT - 100;
+  submit.rad = 30;
+  submit.pad = 5;
+  submit.border = border;
+  submit.inside = inside_yellow;
+  
+  clear.cx = WIN_WIDTH / 4;
+  clear.cy = WIN_HEIGHT - 100;
+  clear.rad = 30;
+  clear.pad = 5;
+  clear.border = border;
+  clear.inside = inside_yellow;
   
 
   while (running) {
@@ -73,18 +88,53 @@ int main() {
       for (int i = 0; i < MAX_PUZZLE; i++) {
 	bordered_square_radius(play_letters[i]);
 	gfx_color(0, 0, 0);
-	gfx_text(play_letters[i].cx - 2, play_letters[i].cy + 2, &play_letters[i].letter);
+	char let[2];
+	sprintf(let, "%c", play_letters[i].letter);
+	gfx_text(play_letters[i].cx - 2, play_letters[i].cy + 2, let);
       }
       for (int i = 0; i < 10; i++) {
 	bordered_square_radius(answer_letters[i]);
+	gfx_color(0, 0, 0);
+	char let[2];
+	sprintf(let, "%c", answer_letters[i].letter);
+	gfx_text(answer_letters[i].cx - 2, answer_letters[i].cy + 2, let);
       }
+      bordered_square_radius(submit);
+      bordered_square_radius(clear);
+      gfx_color(0, 0, 0);
+      gfx_text(submit.cx - 17, submit.cy + 2, "Submit");
+      gfx_text(clear.cx - 15, clear.cy + 2, "Clear");
+      gfx_text(WIN_WIDTH / 2 - 40, 125, prev_output_msg);
       
       gfx_flush();
       event = gfx_wait();
       if (event == 1) {
-	int clicked_square = get_clicked_square(play_letters);
+	int clicked_square = get_clicked_square(play_letters, submit, clear);
 	if (clicked_square == -1) break;
-	printf("%d - %c\n", clicked_square, play_letters[clicked_square].letter);
+	if (clicked_square >= 0 && clicked_square <= 6) {
+	  if (clicked_square == 0) answer_letters[current_answer_letter].inside = inside_yellow;
+	  printf("%d - %c\n", clicked_square, play_letters[clicked_square].letter);
+	  answer_letters[current_answer_letter].letter = play_letters[clicked_square].letter;
+	  current_answer_letter++;
+	}
+	if (clicked_square == 10) {
+	  printf("%d - Submit\n", clicked_square);
+	  int success = check_answer(answer_letters, &current_puzzle);
+	  if (success >= 0) {
+	    sprintf(prev_output_msg, "Correct: %s", current_puzzle.answers[success]);
+	  } else if (success == -1) {
+	    sprintf(prev_output_msg, "Incorrect word");
+	  } else if (success == -2) {
+	    sprintf(prev_output_msg, "Already submitted");
+	  }
+	  fresh_answer(answer_letters, border, inside_grey, &current_answer_letter);
+	}
+	if (clicked_square == 20) {
+	  printf("%d - Clear\n", clicked_square);
+	  fresh_answer(answer_letters, border, inside_grey, &current_answer_letter);
+	  sprintf(prev_output_msg, " ");
+	}
+
       }
       break;
       
@@ -97,5 +147,15 @@ int main() {
   
   
 
-	return 0;
+  return 0;
+}
+
+
+void fresh_answer(LetterSquare answer[], Color border, Color inside_grey, int *current) {
+  init_answer_letters(answer);
+  for (int i = 0; i < 10; i++) {
+    answer[i].border = border;
+    answer[i].inside = inside_grey;
+  }
+  *current = 0;
 }

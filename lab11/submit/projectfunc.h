@@ -23,6 +23,8 @@ typedef struct {
   char letters[MAX_PUZZLE];
   char answers[MAX_ANSWERS][MAX_LETTERS_ANSWER];
   int answer_count;
+  int already_found[MAX_ANSWERS];
+  int amount_found;
 } Puzzle;
 typedef struct {
   int r;
@@ -59,4 +61,5 @@ FILE* open_file(int current_file);
 Puzzle open_puzzle(FILE* file);
 void init_play_letters(Puzzle puzzle, LetterSquare play_letters[]);
 void init_answer_letters(LetterSquare answer_letters[]);
-int get_clicked_square(LetterSquare play_letters[]);
+int get_clicked_square(LetterSquare play_letters[], LetterSquare submit, LetterSquare clear);
+int check_answer(LetterSquare answer_letters[], Puzzle *puzzle);
