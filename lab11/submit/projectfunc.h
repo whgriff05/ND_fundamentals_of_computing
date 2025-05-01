@@ -15,6 +15,7 @@
 #define MAX_PUZZLE 7
 #define MAX_ANSWERS 50
 #define MAX_LETTERS_ANSWER 20
+#define MAX_FILE 2
 
 
 // Structs
@@ -61,5 +62,5 @@ FILE* open_file(int current_file);
 Puzzle open_puzzle(FILE* file);
 void init_play_letters(Puzzle puzzle, LetterSquare play_letters[]);
 void init_answer_letters(LetterSquare answer_letters[]);
-int get_clicked_square(LetterSquare play_letters[], LetterSquare submit, LetterSquare clear);
+int get_clicked_square(LetterSquare play_letters[], LetterSquare submit, LetterSquare clear, LetterSquare give_up);
 int check_answer(LetterSquare answer_letters[], Puzzle *puzzle);

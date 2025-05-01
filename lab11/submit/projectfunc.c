@@ -78,7 +78,7 @@ void init_answer_letters(LetterSquare answer_letters[]) {
   }
 }
 
-int get_clicked_square(LetterSquare play_letters[], LetterSquare submit, LetterSquare clear) {
+int get_clicked_square(LetterSquare play_letters[], LetterSquare submit, LetterSquare clear, LetterSquare give_up) {
   int xpos = gfx_xpos();
   int ypos = gfx_ypos();
   for (int i = 0; i < MAX_PUZZLE; i++) {
@@ -96,6 +96,11 @@ int get_clicked_square(LetterSquare play_letters[], LetterSquare submit, LetterS
   if (xpos >= clear.cx - clear.rad && xpos <= clear.cx + clear.rad) {
     if (ypos >= clear.cy - clear.rad && ypos <= clear.cy + clear.rad) {
       return 20;
+    }
+  }
+  if (xpos >= give_up.cx - give_up.rad && xpos <= give_up.cx + give_up.rad) {
+    if (ypos >= give_up.cy - give_up.rad && ypos <= give_up.cy + give_up.rad) {
+      return 30;
     }
   }
   return -1;

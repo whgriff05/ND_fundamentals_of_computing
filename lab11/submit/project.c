@@ -31,6 +31,7 @@ int main() {
   LetterSquare answer_letters[10];
   LetterSquare submit;
   LetterSquare clear;
+  LetterSquare give_up;
 
 
   // Open the file
@@ -69,6 +70,13 @@ int main() {
   clear.border = border;
   clear.inside = inside_yellow;
   
+  give_up.cx = WIN_WIDTH / 4 - 85;
+  give_up.cy = WIN_HEIGHT - 100;
+  give_up.rad = 30;
+  give_up.pad = 5;
+  give_up.border = border;
+  give_up.inside = inside_yellow;
+  
 
   while (running) {
     gfx_clear();
@@ -101,23 +109,24 @@ int main() {
       }
       bordered_square_radius(submit);
       bordered_square_radius(clear);
+      bordered_square_radius(give_up);
       gfx_color(0, 0, 0);
       gfx_text(submit.cx - 17, submit.cy + 2, "Submit");
       gfx_text(clear.cx - 15, clear.cy + 2, "Clear");
+      gfx_text(give_up.cx - 19, give_up.cy + 2, "Give Up");
       gfx_text(WIN_WIDTH / 2 - 40, 125, prev_output_msg);
       
       gfx_flush();
       event = gfx_wait();
       if (event == 1) {
-	int clicked_square = get_clicked_square(play_letters, submit, clear);
+	int clicked_square = get_clicked_square(play_letters, submit, clear, give_up);
 	if (clicked_square == -1) break;
 	if (clicked_square >= 0 && clicked_square <= 6) {
 	  if (clicked_square == 0) answer_letters[current_answer_letter].inside = inside_yellow;
 	  printf("%d - %c\n", clicked_square, play_letters[clicked_square].letter);
 	  answer_letters[current_answer_letter].letter = play_letters[clicked_square].letter;
 	  current_answer_letter++;
-	}
-	if (clicked_square == 10) {
+	} else if (clicked_square == 10) {
 	  printf("%d - Submit\n", clicked_square);
 	  int success = check_answer(answer_letters, &current_puzzle);
 	  if (success >= 0) {
@@ -127,12 +136,18 @@ int main() {
 	  } else if (success == -2) {
 	    sprintf(prev_output_msg, "Already submitted");
 	  }
+
+	  if (current_puzzle.answer_count == current_puzzle.amount_found) {
+	    if (current_file == MAX_FILE) current_screen = END;
+	    if (current_file < MAX_FILE) current_screen = IN_BETWEEN;
+	  }
 	  fresh_answer(answer_letters, border, inside_grey, &current_answer_letter);
-	}
-	if (clicked_square == 20) {
+	} else if (clicked_square == 20) {
 	  printf("%d - Clear\n", clicked_square);
 	  fresh_answer(answer_letters, border, inside_grey, &current_answer_letter);
 	  sprintf(prev_output_msg, " ");
+	} else if (clicked_square == 30) {
+	  printf("%d - Give Up\n", clicked_square);
 	}
 
       }
